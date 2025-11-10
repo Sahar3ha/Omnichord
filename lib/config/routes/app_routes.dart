@@ -4,7 +4,7 @@ class AppRoutes {
   AppRoutes._();
   static const String splashscreenRoute = '/SlashscreenView';
   
-  static getApplicaton(){
+  static Map<String, SplashscreenView Function(dynamic context)> getApplicaton(){
     return {
       splashscreenRoute: (context) => const SplashscreenView(),
     };
