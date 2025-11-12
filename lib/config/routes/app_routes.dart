@@ -4,7 +4,7 @@ import 'package:omnichord/features/auth/presentation/view/splashscreen_view.dart
 class AppRoutes {
   AppRoutes._();
   static const String splashscreenRoute = '/SlashscreenView';
-  static const String homeRoute = '/SearchPageView';  
+  static const String homeRoute = '/home';
   static getApplicaton(){
     return {
       splashscreenRoute: (context) => const SplashscreenView(),

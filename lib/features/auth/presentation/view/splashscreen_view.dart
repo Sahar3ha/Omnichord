@@ -24,7 +24,7 @@ class _SplashscreenViewState extends State<SplashscreenView>
     _controller.forward();
 
     // Change the route name below to your actual home route.
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 4), () {
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/home');
     });
@@ -44,7 +44,7 @@ class _SplashscreenViewState extends State<SplashscreenView>
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.black, Colors.green.shade900],
+            colors: [const Color.fromARGB(255,25,20,20), const Color.fromARGB(255,29,185,84)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -55,7 +55,7 @@ class _SplashscreenViewState extends State<SplashscreenView>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: const [
-                Icon(Icons.music_note, size: 96, color: Colors.white),
+                Icon(Icons.music_note, size: 96, color: Color.fromARGB(255, 212, 207, 207)),
                 SizedBox(height: 16),
                 Text(
                   'Omnichord',

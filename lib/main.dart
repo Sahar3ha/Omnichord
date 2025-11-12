@@ -6,14 +6,15 @@ import 'package:omnichord/app.dart';
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   // await Hiveservice().init();
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.example.app.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
+  
   runApp(
     const ProviderScope(
       child: OmnichordApp(),
     )
+  );
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.example.omnichord.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
   );
 }

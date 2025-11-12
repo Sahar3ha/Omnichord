@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:omnichord/core/common/player_bar.dart';
 
 final dioProvider = Provider((ref) => Dio());
 final hostProvider = StateProvider<String?>((ref) => null);
@@ -60,7 +61,7 @@ class _SearchpageViewState extends ConsumerState<SearchpageView> {
       return;
     }
     final dio = ref.read(dioProvider);
-    final uri = Uri.parse('$host/v1/tracks')
+    final uri = Uri.parse('$host/tracks')
         .replace(
           queryParameters: {'query': q, 'Omnichord': 'audius_mini_starter'},
         )
@@ -181,7 +182,7 @@ class _SearchpageViewState extends ConsumerState<SearchpageView> {
                           icon: const Icon(Icons.play_arrow),
                           onPressed: () async {
                             final host = ref.read(hostProvider)!;
-                            final streamUrl = '$host/v1/tracks/$trackId/stream';
+                            final streamUrl = '$host/tracks/$trackId/stream';
                             try {
                               await player.setUrl(streamUrl);
                               player.play();
@@ -196,7 +197,7 @@ class _SearchpageViewState extends ConsumerState<SearchpageView> {
                     },
                   ),
           ),
-          // Playerbar here
+          PlayerBar(player: player),
         ],
       ),
     );
