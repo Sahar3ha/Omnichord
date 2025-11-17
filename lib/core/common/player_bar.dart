@@ -1,59 +1,118 @@
+// lib/core/common/player_bar.dart
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:omnichord/config/constants/audio_controller.dart';
 
-class PlayerBar extends StatefulWidget {
-  final AudioPlayer player;
-  const PlayerBar({required this.player, super.key});
-
-  @override
-  State<PlayerBar> createState() => _PlayerBarState();
-}
-
-class _PlayerBarState extends State<PlayerBar> {
-  bool isplaying = false;
+class PlayerBar extends ConsumerWidget {
+  const PlayerBar({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    widget.player.playerStateStream.listen((state) {
-      final playing = state.playing;
-      if (mounted) setState(() => isplaying = playing);
-    });
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final track = ref.watch(audioControllerProvider);
+    final controller = ref.read(audioControllerProvider.notifier);
+    final player = controller.player;
 
-  @override
-  Widget build(BuildContext context) {
+    if (track == null) return const SizedBox.shrink();
+
     return Container(
-      height: 72,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: Colors.grey.shade900),
-      child: Row(
+      decoration: BoxDecoration(
+        color: Colors.black87,
+        border: Border(top: BorderSide(color: Colors.grey.shade800)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const CircleAvatar(
-            radius: 24,
-            backgroundColor: Colors.black26,
-            child: Icon(Icons.music_note),
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.network(
+                  track.artwork,
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: 48,
+                    height: 48,
+                    color: Colors.grey[800],
+                    child: const Icon(Icons.music_note),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      track.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      track.artist,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              // controls
+              StreamBuilder<bool>(
+                stream: player.playingStream,
+                builder: (context, snap) {
+                  final playing = snap.data ?? false;
+                  return Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.skip_previous,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => controller.previous(),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          playing ? Icons.pause_circle : Icons.play_circle,
+                          size: 36,
+                          color: Colors.white,
+                        ),
+                        onPressed: () =>
+                            playing ? controller.pause() : controller.resume(),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.skip_next, color: Colors.white),
+                        onPressed: () => controller.next(),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Playing", style: TextStyle(fontWeight: FontWeight.w600)),
-                Text('Artist Name', style: TextStyle(fontSize: 12)),
-              ],
-            ),
+          StreamBuilder<Duration>(
+            stream: player.positionStream,
+            builder: (context, snapshot) {
+              final position = snapshot.data ?? Duration.zero;
+              final total = player.duration ?? Duration.zero;
+              return ProgressBar(
+                progress: position,
+                total: total,
+                onSeek: (newPosition) => controller.seek(newPosition),
+                timeLabelTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              );
+            },
           ),
-          IconButton(
-            icon: Icon(isplaying? Icons.pause_circle_filled:Icons.play_circle_fill,size: 36,),
-            onPressed: (){
-              if(isplaying){
-                widget.player.pause();
-              }else{
-                widget.player.play();
-              }
-            }, )
         ],
       ),
     );

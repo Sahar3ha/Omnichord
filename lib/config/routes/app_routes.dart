@@ -8,7 +8,7 @@ class AppRoutes {
   static getApplicaton(){
     return {
       splashscreenRoute: (context) => const SplashscreenView(),
-      homeRoute: (context) => const SearchpageView(),
+      homeRoute: (context) => const SearchPage(),
     };
   }
 }
